@@ -35,10 +35,10 @@ integrating renewable energy sources in buildings and neighbourhoods, an
 understanding of energy consumption patterns is needed at different temporal 
 and spatial scales. CESAR-P (Combined Energy Simulation And Retrofitting - 
 Python) is a bottom-up building stock modelling software to evaluate energy 
-consumption and retrofitting strategies for buildings and neighbourhoods. 
+consumption and retrofitting strategies for individual buildings and neighbourhoods. 
 CESAR-P is used to parameterize models for the dynamic building energy 
 simulation tool EnergyPlus (@CRAWLEY_ET_AL_2001). It computes hourly energy 
-demand profiles and indoor temperatures at the individual building scale and 
+demand profiles and indoor temperatures at the building level and 
 takes into account shading and reflections of surrounding buildings. After the 
 current energy demand is computed, retrofitting measures for individual 
 buildings can be evaluated in terms of energy savings, embodied emissions and 
@@ -51,14 +51,14 @@ creates EnergyPlus input data files (IDF) for each building within a specified
 extent, and can process geo-referenced input data (shp) for geometry. Building 
 usage type and construction information is used to populate the building model. 
 The EnergyPlus files are executed with a weather file (epw) of the geographic 
-location which provides the necessary climatic context of the building. The 
+location which provides the necessary climatic context for the building. The 
 results from EnergyPlus consist of a set of hourly resolved times series for 
 each building, including operational energy, costs and emissions. The retrofit 
 module can be used to update the building models according to a specified 
 retrofit strategy. Retrofit strategies specify the frequency of retrofits to 
 the main building elements such as walls, windows and roofs across the building 
-stock. The output of the retrofit module include next to the before-mentioned 
-operational indicators also costs and embodied emissions of retrofitting 
+stock. The output of the retrofit module include, in addition to the above-mentioned 
+operational indicators, costs and embodied emissions of retrofitting 
 interventions. All simulation steps can also be run in parallel on multiple 
 cores. The code is platform-independent and is tested to run on Linux and 
 Windows. The source code for CESAR-P has been archived to Zenodo: 
@@ -83,19 +83,14 @@ features of CESAR-P include:
   each building.
 - Since CESAR-P uses EnergyPlus, which is a continually developed energy 
   simulation tool within the research field, the capabilities of CESAR-P can 
-  be extended to accommodate future develoments and improve modelling accuracy.
-- The tool can be applied at various scales and can be used for pre-dicting the
-  energy consumption of a single building, of whole neigh-bourhoods with thousands 
-  of buildings (@WANG_ET_AL_2018) or in combination with clustering approaches 
-  for calculating national building energy demands (@EGGIMANN_ET_AL_2022). 
+  be extended to accommodate future developments and improve modelling accuracy.
+- The tool can be applied at various scales and can be used for predicting the
+  energy consumption of a single building, of whole neighbourhoods with thousands 
+  of buildings (@WANG_ET_AL_2018) or, in combination with clustering approaches, 
+  for calculating national building energy demands (@MURRAY_ET_AL_2020, @EGGIMANN_ET_AL_2022). 
 - The archetypes used to parameterize the building models are stored to a 
   graph database. The data is structured according to an urban energy 
-  simulation ontology (@ALLAN_ET_AL_2021) 
-- CESAR-P has been used for national scale energy simulation in combination with 
-  clustering approaches (@MURRAY_ET_AL_2020, @EGGIMANN_ET_AL_2022).
-- Estimating potentials for demand flexibilities (sweet-pathfndr.ch)
-- Estimating future energy demand (and potential for reduction) considering 
-  building retrofit scenarios, replacement rates, and addition of new buildings. 
+  simulation ontology (@ALLAN_ET_AL_2021)
 
 # Acknowledgements 
 
