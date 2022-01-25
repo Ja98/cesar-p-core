@@ -23,7 +23,7 @@ authors:
 affiliations:
   - name: Urban Energy Systems Laboratory, Empa, Duebendorf, Switzerland
     index: 1
-date: 24 January 2022
+date: 25 January 2022
 bibliography: paper.bib
 ---
 
@@ -52,8 +52,9 @@ extent, and can process geo-referenced input data (shp) for geometry. Building
 usage type and construction information is used to populate the building model. 
 The EnergyPlus files are executed with a weather file (epw) of the geographic 
 location which provides the necessary climatic context for the building. The 
-results from EnergyPlus consist of a set of hourly resolved times series for 
-each building, including operational energy, costs and emissions. The retrofit 
+results consist of a configurable set of yearly demand values and hourly 
+resolved times series for each building from EnergyPlus and additional
+operational costs and emissions. The retrofit 
 module can be used to update the building models according to a specified 
 retrofit strategy. Retrofit strategies specify the frequency of retrofits to 
 the main building elements such as walls, windows and roofs across the building 
@@ -78,19 +79,20 @@ features of CESAR-P include:
   water consumption, electricity consumption, comfort parameters, operational 
   costs and emissions, embodied emissions and investment costs of retrofitting 
   solutions and solar irradiance on external surfaces.
-- Various geo-referenced data sources can be used as an input to CESAR-P 
-  to simulate the current energy demand as well as retrofitting options for 
-  each building.
+- Geo-referenced data sources (shp) as input for building geometries
+- The archetypes used to parameterize the building models are stored to a 
+  graph database. The data is structured according to an urban energy 
+  simulation ontology (@ALLAN_ET_AL_2021)
+- Evaluation of retrofitting options and strategies
+- Simulate and compare energy demand for scenarios with different building
+  parametrization, for example to evaluate passive cooling potential (@SILVA_ET_AL_2022)
 - Since CESAR-P uses EnergyPlus, which is a continually developed energy 
   simulation tool within the research field, the capabilities of CESAR-P can 
   be extended to accommodate future developments and improve modelling accuracy.
 - The tool can be applied at various scales and can be used for predicting the
   energy consumption of a single building, of whole neighbourhoods with thousands 
   of buildings (@WANG_ET_AL_2018) or, in combination with clustering approaches, 
-  for calculating national building energy demands (@MURRAY_ET_AL_2020, @EGGIMANN_ET_AL_2022). 
-- The archetypes used to parameterize the building models are stored to a 
-  graph database. The data is structured according to an urban energy 
-  simulation ontology (@ALLAN_ET_AL_2021)
+  for calculating national building energy demands (@MURRAY_ET_AL_2020, @EGGIMANN_ET_AL_2022).
 
 # Acknowledgements 
 
