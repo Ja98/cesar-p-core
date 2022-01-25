@@ -93,7 +93,7 @@ features of CESAR-P include:
   simulation ontology (@ALLAN_ET_AL_2021) 
 - CESAR-P has been used for national scale energy simulation in combination with 
   clustering approaches (@MURRAY_ET_AL_2020, @EGGIMANN_ET_AL_2022).
-- Estimating potentials for demand flexibilities (@SWEET_PATHFINDER)
+- Estimating potentials for demand flexibilities (sweet-pathfndr.ch)
 - Estimating future energy demand (and potential for reduction) considering 
   building retrofit scenarios, replacement rates, and addition of new buildings. 
 
