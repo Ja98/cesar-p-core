@@ -47,10 +47,10 @@ created from standards and statistics about the Swiss building stock; however,
 users are able to define their own constructions and internal conditions for 
 their buildings. CESAR-P is written in Python and is a further development of 
 the tool CESAR (@WANG_ET_AL_2018). The building model generator of CESAR-P 
-creates EnergyPlus input data files (IDF) for each building within a specified 
-extent, and can process geo-referenced input data (shp) for geometry. Building 
+creates EnergyPlus input data files (.IDF) for each building within a specified 
+extent, and can process geo-referenced input data as shapefiles (ESRI .shp format) for geometry. Building 
 usage type and construction information is used to populate the building model. 
-The EnergyPlus files are executed with a weather file (epw) of the geographic 
+The EnergyPlus files are executed with a weather file (EnergyPlus epw weather data format) of the geographic 
 location which provides the necessary climatic context for the building. The 
 results consist of a configurable set of yearly demand values and hourly 
 resolved times series for each building from EnergyPlus and additional
