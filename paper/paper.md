@@ -73,12 +73,12 @@ to identify the time-resolved energy consumption of buildings at large scale to 
 technologies in buildings and to develop energy masterplans for neighborhoods and cities.  Key features of CESAR-P
 include: 
 
-- The modelling of indoor temperatures, heating and cooling loads, domestic hot 
+- Modelling of indoor temperatures, heating and cooling loads, domestic hot 
   water consumption, electricity consumption, comfort parameters, operational 
   costs and emissions, embodied emissions and investment costs of retrofitting 
   solutions and solar irradiance on external surfaces.
-- The capability of automated extraction of building geometries from commonly used geometric file types (such as
-  shapefiles) simplifying the generation of required input files.
+- Capability to automate extraction of building geometries from commonly used geometric file types (such as
+  shapefiles), simplifying the generation of required input files.
 - The archetypes used to parameterize the building models are stored as RDF triples (in TTL files). The triples contain
   ABox statements related to the construction properties defined by each archetype. The statements conform to classes
   and properties stored in the urban energy simulation ontology (@ALLAN_ET_AL_2021). By default, a construction
@@ -90,8 +90,8 @@ include:
   the user to query the results and underlying data used to build the simulation inputs. The use of ontologies will
   enable the linking of concepts and data models used in other studies using TBox inferences.
 - Evaluation of retrofitting options and strategies
-- Simulate and compare energy demand for scenarios with different building parametrization, for example to evaluate
-  passive cooling potential (@SILVA_ET_AL_2022)
+- Simulation and comparison of energy demand for scenarios with different building parametrization, for example to
+  evaluate passive cooling potential (@SILVA_ET_AL_2022)
 - Since CESAR-P uses EnergyPlus, which is a continually developed energy simulation tool within the research field, the
   capabilities of CESAR-P can be extended to accommodate future developments and improve modelling accuracy.
 - The tool can be applied at various scales and can be used for predicting the energy consumption of a single building,
@@ -294,8 +294,9 @@ After the simulation run, you can qurey the results form your `SimulationManager
 
 ```
 hourly_demand = 
-    sim_manager.collect_custom_results(result_keys=[RES_KEY_HEATING_DEMAND, RES_KEY_DHW_DEMAND],
-                                       results_frequency=ResultsFrequency.HOURLY)
+    sim_manager.collect_custom_results(
+      result_keys=[RES_KEY_HEATING_DEMAND, RES_KEY_DHW_DEMAND],
+      results_frequency=ResultsFrequency.HOURLY)
 ```
 
 ## Retrofit
