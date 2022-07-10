@@ -60,7 +60,7 @@ profiles are useful for planners to evaluate current performance and investigate
 different scenarios (e.g. building retrofits, changing climate). Measured demands are often unavailable which makes
 building energy simulation a key tool for decision-making. Urban building energy modelling (UBEM) has been established
 in recent years to support the implementation of energy conservation measures and the integration of renewable energy
-technologies at city and district scale. UBEM tools can gbe classified as taking a top-down or a bottom-up modelling
+technologies at city and district scale. UBEM tools can be classified as taking a top-down or a bottom-up modelling
 approach. Top-down approaches rely on aggregated data and different drivers (e.g. socio-economic indicators or climate
 data), whereas bottom-up modelling approaches are based on data at an individual building scale and include either
 statistical or engineering based modelling techniques to compute energy demand data of a set of individual buildings
@@ -78,17 +78,17 @@ include:
   costs and emissions, embodied emissions and investment costs of retrofitting 
   solutions and solar irradiance on external surfaces.
 - The capability of automated extraction of building geometries from commonly used geometric file types (such as
-  shapefiles) simplifies the generation of required input files.
+  shapefiles) simplifying the generation of required input files.
 - The archetypes used to parameterize the building models are stored as RDF triples (in TTL files). The triples contain
   ABox statements related to the construction properties defined by each archetype. The statements conform to classes
   and properties stored in the urban energy simulation ontology (@ALLAN_ET_AL_2021). By default, a construction
   archetype will be assigned to a building instance using the building age. The construction archetype contains all of
   the material layers in the floor, roof and external walls of the building. CESAR-P loads the archetype data directly
-  from the provided TTL files, but it can be configured to access a graph database instance where the data has been
-  loaded. The reason to store the source data using RDF is due to the growing number of UBEM studies. It has been found
-  that it is challenging to track assumptions used in published studies. The use of semantic web technologies such as
-  RDF enables the user to query the results and underlying data used to build the simulation inputs. The use of
-  ontologies will enable the linking of concepts and data models used in other studies using TBox inferences.
+  from the provided TTL files, but it can be configured to access a graph database instance to query archetype data. The
+  reason to store the source data using RDF is due to the growing number of UBEM studies. It has been found that it is
+  challenging to track assumptions used in published studies. The use of semantic web technologies such as RDF enables
+  the user to query the results and underlying data used to build the simulation inputs. The use of ontologies will
+  enable the linking of concepts and data models used in other studies using TBox inferences.
 - Evaluation of retrofitting options and strategies
 - Simulate and compare energy demand for scenarios with different building parametrization, for example to evaluate
   passive cooling potential (@SILVA_ET_AL_2022)
@@ -100,14 +100,14 @@ include:
 
 # Example
 
-Following we are outlining how you set up a simulation with cesar-p-core library and point out some features. The
-snippets are based on the [basic usage
+Following we are outlining how you set up a simulation with cesar-p-core library. The snippets are based on the [basic
+usage
 example](https://github.com/hues-platform/cesar-p-usage-examples/blob/master/advanced_examples/basic_cesar_usage.py) in
 [cesar-p-usage-examples](https://github.com/hues-platform/cesar-p-usage-examples).
 
-The main API class of `cesar-p-core` library is the `SimulationManager`. You pass the configuration and the output
-folder for your project. And we need to create and pass a process wide used instance of a unit registry handling
-conversion of physical units. A minimal code-snippet looks like:
+The main API class of `cesar-p-core` library is the `SimulationManager`. On initialization of the class you need to pass
+the configuration and the output folder for your project. Additionally, a process wide instance of the unit registry
+(handling conversion of physical units) must be provided. A minimal code-snippet looks like:
 
 ``` python
 import cesarp.common
@@ -121,7 +121,7 @@ if __name__ == "__main__":
 ```
 
 In the YAML configuration you need to define the input files of your project. Below is the minimal set of YAML
-configuration you need for any project and the code refers to this file with name `simple_main_config.yml`.
+configuration you need for any project. The code above refers to this file as `simple_main_config.yml`.
 
 ```
 MANAGER:
@@ -156,6 +156,10 @@ The `SiteVertices.csv` defines the footprints and height of all the buildings on
 | 2          | 35      | 0       | 12.5   |
 | ...        |
 
+The `BuildingInformation.csv` file defines the properties of the buildings. 
+The configuration entry `BLDG_FID_FILE` requires the column `ORIG_FID`, entry `BLDG_TYPE_PER_BLDG_FILE` column `SIA2024BuildingType` and entry `BLDG_AGE_FILE` column `BuildingAge`. This example above includes a few more columns per building, which will be explained further down.
+Usually you will have one file defining all the properties of your buildings, but the configuration gives you 
+the flexibility to point to separate files for the different building properties and also to map to custom column names to allow using input data files without preprocessing (see the sub-entries for `BLDG_FID_FILE`).
 
 | ORIG_FID | SIA2024BuildingType | BuildingAge | ECarrierHeating | ECarrierDHW | GlazingRatio |
 | -------- | ------------------- | ----------- | --------------- | ----------- | ------------ |
@@ -165,31 +169,27 @@ The `SiteVertices.csv` defines the footprints and height of all the buildings on
 | 8        | MFH                 | 2012        | 2               | 2           | 30           |
 | 9        | MFH                 | 2015        | 2               | 2           | 30           |
 
-The `BuildingInformation.csv` file defines the properties of the buildings. 
-The configuration entry `BLDG_FID_FILE` requires the column `ORIG_FID`, entry `BLDG_TYPE_PER_BLDG_FILE` column `SIA2024BuildingType` and entry `BLDG_AGE_FILE` column `BuildingAge`. This example above includes a few more columns per building, which will be explained further down.
-Usually you will have one file defining all the properties of your buildings, but the configuration gives you 
-the flexibility to point to separate files for the different building properties and also to map to custom column names to allow using input data files without preprocessing (see the sub-entries for `BLDG_FID_FILE`). 
-
-The last required input is the weather data in EnergyPlus epw format.
+The last required input is the weather data in EnergyPlus epw format, in the example named `Zurich_2015.epw`.
 
 ## Building model parametrization
 
-The main source for constructional parameters are the archetype definitions stored in a database (delivered with the
-library) and assigend by the age of a building. Operational parameters such as occupancy or loads from appliances are
-based on a swiss norm (SIA2024). A few further parameters and constants can be set in the YMAL configuration. An
-overview of all the parameters you can specify you find in
+The main source for constructional parameters are the archetype definitions (included in the library) and assigend by
+the age of a building. Operational parameters such as occupancy or loads from appliances are based on a swiss norm
+(SIA2024). A few further parameters and constants can be set in the YMAL configuration. You find an overview of all the
+parameters you can specify in the YAML in
 [cesar-p-config-overview.yaml](https://github.com/hues-platform/cesar-p-core/blob/master/cesar-p-config-overview.yaml).
-You only need to overwrite the properties you want to change. Make sure you place them under the correct category and
-indention is correct. The example below overwrites the following properties:
+You only need to overwrite the properties you want to change in your project specific YAML configuration. Make sure you
+place the configuration entries under the correct category and the indention is correct. The example below overwrites
+the following properties:
 
-- `RANDOM_CONSTRUCTIONS` when selecting the constructions, choose randomly one of the options if there are several
-  available matching the ageclass of the building processed
+- `RANDOM_CONSTRUCTIONS` if set to `True` CESAR-P chooses randomly one of the available construction archetypes, if
+  there are several matching the ageclass of the porcessed building. 
 - `GLAZING_RATIO_PER_BLDG_FILE` by default the glazing ratio is defined by a lookup based on the age of the builindg. If
   you have information of the glazing ratio per building, add this information e.g. to your `BuildingInformation.csv` as
   column `GlazingRatio`.
-- `RADIUS`: radius around a building in which other buildings are simulated as shading objects
-- `MINIMAL_STORY_HEIGHT` defines the default respectively minimum floor height to use. The number of floors floors is
-  defined by the integer division of building height and MINIMAL_STORY_HEIGHT.
+- `RADIUS` defines the radius around a building in which other buildings are simulated as shading objects
+- `MINIMAL_STORY_HEIGHT` defines the default respectively minimum floor height to use. The number of floors is defined
+  by the integer division of building height and MINIMAL_STORY_HEIGHT.
 
 Your YAML configuration including those parameters would look like:
 
@@ -210,7 +210,7 @@ MAIN_BLDG_SHAPE:
 
 If you need even more customization, you can plug in your own implementation for assignment of the constructional and
 operational parameters per building. See
-[custom_constr_archetype_mapping](https://github.com/hues-platform/cesar-p-usage-examples/tree/master/advanced_examples/custom_constr_archetype_mapping)respectively
+[custom_constr_archetype_mapping](https://github.com/hues-platform/cesar-p-usage-examples/tree/master/advanced_examples/custom_constr_archetype_mapping) respectively
 [operation_params_per_floor](https://github.com/hues-platform/cesar-p-usage-examples/tree/master/advanced_examples/operation_params_per_floor)
 in [cesar-p-usage-examples repository](https://github.com/hues-platform/cesar-p-usage-examples).
 
@@ -235,13 +235,13 @@ The reuqired columns in the linked file are `ECarrierHeating`, `ECarrierDHW` def
 source used for space heating respectively domestic hot water. The allowed options are defined in the enumeration
 [EnergySource](https://github.com/hues-platform/cesar-p-core/blob/master/src/cesarp/model/EnergySource.py).
 
-An extract of the `site_result_summary.csvy` showing most important annual results per building:
+The table below is an extract of the `site_result_summary.csvy` showing most important annual results per building:
 
-| Bldg | Heating Annual specific | DHW Annual specific | Electricity Annual specific | Cooling Annual specific | Total PEN              | Total CO2              |
-| ---- | ----------------------- | ------------------- | --------------------------- | ----------------------- | ---------------------- | ---------------------- |
-|      | kWh/m2/year             | kWh/m2/year         | kWh/m2/year                 | kWh/m2year              | Oileq * MJ / m2 / year | CO2eq * kg / m2 / year |
-| 1    | 101                     | 18                  | 23                          | 0.9                     | 898                    | 49                     |
-| 2    | 113                     | 18                  | 23                          | 1.1                     | 963                    | 54                     |
+| Bldg | Heating Annual specific | DHW Annual specific | Electricity Annual specific | Cooling Annual specific | Total PEN | Total CO2 |
+| --- | --- | --- | --- | --- | --- | --- |
+| | kWh/m2 /year | kWh/m2 /year | kWh/m2 /year | kWh/m2 /year | kWh/m2 /year | Oileq * MJ/m2 /year | CO2eq * kg/m2 /year |
+| 1 | 101 | 18 | 23 | 0.9 | 898 | 49 |
+| 2 | 113 | 18 | 23 | 1.1 | 963 | 54 |
 | ...  |
 
 
@@ -259,20 +259,20 @@ Full list of result values reported:
 | Electricity Annual specific          | kWh/year/m2            |
 | Cooling Annual specific              | kWh/year/m2            |
 | Total bldg floor area                | m2                     |
-| Total PEN                            | Oileq * MJ / m2 / year |
-| PEN Heating                          | Oileq * MJ / m2 / year |
-| PEN DHW                              | Oileq * MJ / m2 / year |
-| PEN Elec                             | Oileq * MJ / m2 / year |
-| Total CO2                            | CO2eq * kg / m2 / year |
-| CO2 Heating                          | CO2eq * kg / m2 / year |
-| CO2 DHW                              | CO2eq * kg / m2 / year |
-| CO2 Elec                             | CO2eq * kg / m2 / year |
-| Heating - Fuel Costs                 | CHF / year             |
-| DHW - Fuel Costs                     | CHF / year             |
-| Electricity - Costs                  | CHF / year             |
-| Year used for lookup of cost factors | -                      |
+| Total PEN                            | Oileq * MJ/m2/year |
+| PEN Heating                          | Oileq * MJ/m2/year |
+| PEN DHW                              | Oileq * MJ/m2/year |
+| PEN Elec                             | Oileq * MJ/m2/year |
+| Total CO2                            | CO2eq * kg/m2/year |
+| CO2 Heating                          | CO2eq * kg/m2/year |
+| CO2 DHW                              | CO2eq * kg/m2/year |
+| CO2 Elec                             | CO2eq * kg/m2/year |
+| Heating - Fuel Costs                 | CHF/year             |
+| DHW - Fuel Costs                     | CHF/year             |
+| Electricity - Costs                  | CHF/year             |
+| Year used for lookup of cost factors | -                    |
 
-It is good practice to check the column `EnergyPlus error level` to check there are no Errors or Warnings from
+It is good practice to check the column `EnergyPlus error level` to make sure there are no errors or warnings from
 EnergyPlus simulation. If there are, check out the details in the `eplus_error_summary.err` file.
 
 In case you want details about how the building model geometry was defiend, check out the
@@ -285,24 +285,26 @@ as a pandas dataframe:
 
 Additional imports needed
 ```
-from cesarp.eplus_adapter.eplus_eso_results_handling import RES_KEY_DHW_DEMAND, RES_KEY_HEATING_DEMAND
+from cesarp.eplus_adapter.eplus_eso_results_handling 
+    import RES_KEY_DHW_DEMAND, RES_KEY_HEATING_DEMAND
 from cesarp.eplus_adapter.idf_strings import ResultsFrequency
 ```
 
 After the simulation run, you can qurey the results form your `SimulationManager` instance:
 
 ```
-hourly_demand = sim_manager.collect_custom_results(result_keys=[RES_KEY_HEATING_DEMAND, RES_KEY_DHW_DEMAND],
-                                                   results_frequency=ResultsFrequency.HOURLY)
+hourly_demand = 
+    sim_manager.collect_custom_results(result_keys=[RES_KEY_HEATING_DEMAND, RES_KEY_DHW_DEMAND],
+                                       results_frequency=ResultsFrequency.HOURLY)
 ```
 
 ## Retrofit
 
 For retrofitting the general procedure is to first define a baseline simulation and then run on top one or more retrofit
-scenarios. There are two retrofit managers implemented,
+scenarios. There are two retrofit managers implemented, the basic
 [SimpleRetrofitManager](https://github.com/hues-platform/cesar-p-core/blob/master/src/cesarp/retrofit/all_bldgs/SimpleRetrofitManager.py)
 and
-[EnergyPerspective2050RetrofitManager](https://github.com/hues-platform/cesar-p-core/blob/master/src/cesarp/retrofit/energy_perspective_2050/EnergyPerspective2050RetrofitManager.py)
+[EnergyPerspective2050RetrofitManager](https://github.com/hues-platform/cesar-p-core/blob/master/src/cesarp/retrofit/energy_perspective_2050/EnergyPerspective2050RetrofitManager.py),
 following more complex ruels to decide on reftrofit measures. You use those manager classes instead of the
 `SimulationManager` to run your simulations. If you need anything more advanced you can implement your own retrofit
 manager deciding which retrofit mesaures are carried out for which building.
@@ -324,14 +326,14 @@ groundfloor were retrofitted. Details about retrofit measures, costs and embodie
 | 2        | wall_win_groundf | 18                      | 349'065        | 22'560                          |
 
 
-See the [retrofit example](https://github.com/hues-platform/cesar-p-usage-examples/blob/master/advanced_examples/retrofit_simple_example.py) for more details.     
+See the [retrofit example](https://github.com/hues-platform/cesar-p-usage-examples/blob/master/advanced_examples/retrofit_simple_example.py) for more details.
 
 ## Project handling
 
-There are several features to facilitate comparision between different simulation runs with changed parameters,
-re-loading existing projects to avoid re-generation of building models, simulating exisiting IDF files. To allow for
-exchange projects or backup there is the option to save all input files including the constructions database in a ZIP
-file. Check out the [basic usage
+There are several features to simplify project management, including comparision between different simulation runs with
+changed parameters, re-loading existing projects to avoid re-generation of building models or simulating exisiting IDF
+files. To allow for exchangeing or backing up projects there is the option to save all input files including the
+constructions database in a ZIP file. Check out the [basic usage
 example](https://github.com/hues-platform/cesar-p-usage-examples/blob/master/advanced_examples/basic_cesar_usage.py) to
 see those features in action.
 
