@@ -1,6 +1,6 @@
 # coding=utf-8
 #
-# Copyright (c) 2021, Empa, Leonie Fierz, Aaron Bojarski, Ricardo Parreira da Silva, Sven Eggimann.
+# Copyright (c) 2022, Empa, Leonie Fierz, Aaron Bojarski, Ricardo Parreira da Silva, Sven Eggimann.
 #
 # This file is part of CESAR-P - Combined Energy Simulation And Retrofit written in Python
 #
@@ -28,7 +28,7 @@ import cesarp.graphdb_access.sparql_queries as sparql_queries
 
 
 class LocalFileReader:
-    def __init__(self, filename=None, custom_config={}):
+    def __init__(self, filename=None, custom_config=None):
         self.cfg = cesarp.common.load_config_for_package(_default_config_file, __package__, custom_config)
         if filename is None:
             filename = self.cfg["LOCAL"]["PATH"]
@@ -92,6 +92,10 @@ class LocalFileReader:
 
     def get_archetype_year_range_from_graph_for_uri(self, archetype_uri):
         result = self.g.query(sparql_queries.get_archetype_year_range_by_uri.replace("$$$", archetype_uri))
+        return self.create_df(result)
+
+    def get_window_shading_constr_from_graph_for_uri(self, archetype_uri):
+        result = self.g.query(sparql_queries.get_window_shading_constr_by_uri.replace("$$$", archetype_uri))
         return self.create_df(result)
 
     def create_df(self, sparql_out):

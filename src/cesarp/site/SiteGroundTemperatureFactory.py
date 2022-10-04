@@ -1,6 +1,6 @@
 # coding=utf-8
 #
-# Copyright (c) 2021, Empa, Leonie Fierz, Aaron Bojarski, Ricardo Parreira da Silva, Sven Eggimann.
+# Copyright (c) 2022, Empa, Leonie Fierz, Aaron Bojarski, Ricardo Parreira da Silva, Sven Eggimann.
 #
 # This file is part of CESAR-P - Combined Energy Simulation And Retrofit written in Python
 #
@@ -26,7 +26,7 @@ from cesarp.model.SiteGroundTemperatures import SiteGroundTemperatures
 
 
 class SiteGroundTemperatureFactory:
-    def __init__(self, ureg, custom_config={}):
+    def __init__(self, ureg, custom_config=None):
         """
         Create an instance of SiteGroundTemperatureFactory
 

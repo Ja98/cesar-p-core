@@ -1,6 +1,6 @@
 # coding=utf-8
 #
-# Copyright (c) 2021, Empa, Leonie Fierz, Aaron Bojarski, Ricardo Parreira da Silva, Sven Eggimann.
+# Copyright (c) 2022, Empa, Leonie Fierz, Aaron Bojarski, Ricardo Parreira da Silva, Sven Eggimann.
 #
 # This file is part of CESAR-P - Combined Energy Simulation And Retrofit written in Python
 #
@@ -58,13 +58,13 @@ class / module                                                                  
 
 import os
 from pathlib import Path
-from typing import Dict, Any
+from typing import Dict, Any, Optional
 from cesarp.common import load_config_for_package
 
 _default_config_file = os.path.dirname(__file__) / Path("energy_strategy_config.yml")
 
 
-def get_selected_energy_strategy_cfg(custom_config: Dict[str, Any] = {}):
+def get_selected_energy_strategy_cfg(custom_config: Optional[Dict[str, Any]] = None):
     full_cfg = load_config_for_package(_default_config_file, __package__, custom_config)
     es_selection = full_cfg["ENERGY_STRATEGY_SELECTION"]
     try:

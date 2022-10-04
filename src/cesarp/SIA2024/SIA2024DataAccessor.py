@@ -1,6 +1,6 @@
 # coding=utf-8
 #
-# Copyright (c) 2021, Empa, Leonie Fierz, Aaron Bojarski, Ricardo Parreira da Silva, Sven Eggimann.
+# Copyright (c) 2022, Empa, Leonie Fierz, Aaron Bojarski, Ricardo Parreira da Silva, Sven Eggimann.
 #
 # This file is part of CESAR-P - Combined Energy Simulation And Retrofit written in Python
 #
@@ -43,7 +43,7 @@ class SIA2024DataAccessor:
 
     __PROFILE_SETTINGS_KEY = "PROFILE_SETTINGS"
 
-    def __init__(self, ureg, custom_config={}):
+    def __init__(self, ureg, custom_config=None):
         self.ureg = ureg
         cfg = cesarp.common.config_loader.load_config_for_package(_default_config_file, __package__, custom_config)
         sia_sheet_cfg_file = cfg["PROFILE_GENERATION"]["SIA_SHEET_CONFIG_FILE"]

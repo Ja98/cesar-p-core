@@ -1,6 +1,6 @@
 # coding=utf-8
 #
-# Copyright (c) 2021, Empa, Leonie Fierz, Aaron Bojarski, Ricardo Parreira da Silva, Sven Eggimann.
+# Copyright (c) 2022, Empa, Leonie Fierz, Aaron Bojarski, Ricardo Parreira da Silva, Sven Eggimann.
 #
 # This file is part of CESAR-P - Combined Energy Simulation And Retrofit written in Python
 #
@@ -31,12 +31,14 @@ class DatasetMetadata:
         source_link: str = None,
         date_created=datetime.now(),
         description=None,
-        config_entries: Dict = {},
+        config_entries: Dict = None,
     ):
         self.SOURCE = source
         self.SOURCE_LINK = source_link
         self.DESCRIPTION = description
         self.DATE_CREATED = date_created
+        if config_entries is None:
+            config_entries = {}
         self.CONFIG_ENTRIES = config_entries
         self.VERSION_INFO = get_version_info()
 

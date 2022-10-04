@@ -1,6 +1,6 @@
 # coding=utf-8
 #
-# Copyright (c) 2021, Empa, Leonie Fierz, Aaron Bojarski, Ricardo Parreira da Silva, Sven Eggimann.
+# Copyright (c) 2022, Empa, Leonie Fierz, Aaron Bojarski, Ricardo Parreira da Silva, Sven Eggimann.
 #
 # This file is part of CESAR-P - Combined Energy Simulation And Retrofit written in Python
 #
@@ -22,7 +22,7 @@
 import logging
 import os
 import pandas
-from typing import Dict, Any
+from typing import Dict, Any, Optional
 from SPARQLWrapper import SPARQLWrapper, JSON
 
 import cesarp.graphdb_access.sparql_queries as sparql_queries
@@ -31,7 +31,7 @@ from cesarp.graphdb_access import _default_config_file
 
 
 class GraphDBReader:
-    def __init__(self, sparql_endpoint: str = None, custom_config: Dict[str, Any] = {}):
+    def __init__(self, sparql_endpoint: str = None, custom_config: Optional[Dict[str, Any]] = None):
         self.cfg = cesarp.common.load_config_for_package(_default_config_file, __package__, custom_config)
         if sparql_endpoint is None:
             sparql_endpoint = self.cfg["REMOTE"]["SPARQL_ENDPOINT"]
@@ -109,6 +109,11 @@ class GraphDBReader:
 
     def get_archetype_year_range_from_graph_for_uri(self, archetype_uri):
         self.sparql.setQuery(sparql_queries.get_archetype_year_range_by_uri.replace("$$$", archetype_uri))
+        results = self.sparql.query().convert()
+        return self.create_df(results)
+
+    def get_window_shading_constr_from_graph_for_uri(self, archetype_uri):
+        self.sparql.setQuery(sparql_queries.get_window_shading_constr_by_uri.replace("$$$", archetype_uri))
         results = self.sparql.query().convert()
         return self.create_df(results)
 

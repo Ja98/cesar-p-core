@@ -1,6 +1,6 @@
 # coding=utf-8
 #
-# Copyright (c) 2021, Empa, Leonie Fierz, Aaron Bojarski, Ricardo Parreira da Silva, Sven Eggimann.
+# Copyright (c) 2022, Empa, Leonie Fierz, Aaron Bojarski, Ricardo Parreira da Silva, Sven Eggimann.
 #
 # This file is part of CESAR-P - Combined Energy Simulation And Retrofit written in Python
 #
@@ -21,7 +21,7 @@
 #
 import pandas as pd
 import pint
-from typing import Dict, Any
+from typing import Dict, Any, Optional
 from pathlib import Path
 
 import cesarp.common
@@ -36,7 +36,7 @@ class EPlusEioResultAnalyzer:
 
     _EIO_FILE_NAME = "eplusout.eio"
 
-    def __init__(self, result_folder_path: str, ureg: pint.UnitRegistry, custom_config: Dict[str, Any] = {}):
+    def __init__(self, result_folder_path: str, ureg: pint.UnitRegistry, custom_config: Optional[Dict[str, Any]] = None):
         """
         Initialization
 

@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2021, Empa, Leonie Fierz, Aaron Bojarski, Ricardo Parreira da Silva, Sven Eggimann.
+# Copyright (c) 2022, Empa, Leonie Fierz, Aaron Bojarski, Ricardo Parreira da Silva, Sven Eggimann.
 #
 # This file is part of CESAR-P - Combined Energy Simulation And Retrofit written in Python
 #
@@ -18,7 +18,7 @@
 #
 # Contact: https://www.empa.ch/web/s313
 #
-from typing import Dict, Any
+from typing import Dict, Any, Optional
 import pint
 import cesarp.common
 from cesarp.model.BuildingOperation import NightVent, WindowShadingControl
@@ -30,7 +30,7 @@ class PassiveCoolingOperationFactory:
     For documentation about the passive cooling features modeled, namely night ventilation and window shading, see docs/features/passive-cooling.rst
     """
 
-    def __init__(self, ureg: pint.UnitRegistry, custom_cfg: Dict[str, Any]):
+    def __init__(self, ureg: pint.UnitRegistry, custom_cfg: Optional[Dict[str, Any]]):
         self._ureg = ureg
         self._cfg_pckg = cesarp.common.load_config_for_package(_default_config_file, __package__, custom_cfg)
 

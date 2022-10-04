@@ -1,6 +1,6 @@
 # coding=utf-8
 #
-# Copyright (c) 2021, Empa, Leonie Fierz, Aaron Bojarski, Ricardo Parreira da Silva, Sven Eggimann.
+# Copyright (c) 2022, Empa, Leonie Fierz, Aaron Bojarski, Ricardo Parreira da Silva, Sven Eggimann.
 #
 # This file is part of CESAR-P - Combined Energy Simulation And Retrofit written in Python
 #
@@ -22,7 +22,6 @@
 import logging
 import pint
 import os
-import shutil
 import copy
 from typing import TypeVar, Mapping, Protocol, Optional, Union, Tuple, Dict, List
 from eppy.modeleditor import IDF
@@ -44,7 +43,6 @@ from cesarp.model.BuildingConstruction import InstallationsCharacteristics
 from cesarp.model.WindowConstruction import WindowShadingMaterial
 from cesarp.model.BuildingOperationMapping import BuildingOperationMapping
 from cesarp.model.SiteGroundTemperatures import SiteGroundTemperatures
-from cesarp.idf_constructions_db_access.ConstructionAsIDF import ConstructionAsIDF
 from cesarp.eplus_adapter.ConstructionIDFWritingHandler import ConstructionIDFWritingHandler
 
 ConstrType = TypeVar("ConstrType")
@@ -76,7 +74,7 @@ class CesarIDFWriter:
         idf_file_path,
         unit_registry,
         profiles_files_handler: Optional[ProfileFilesHandler] = None,
-        custom_config={},
+        custom_config=None,
     ):
         """
         You can only use one construction type at a time. All three constr_xxx callables take a construction object as the first argument.
@@ -94,7 +92,6 @@ class CesarIDFWriter:
         assert not os.path.exists(idf_file_path), f"Cannot create IDF File {idf_file_path}. Already existing."
         self.logger = logging.getLogger(__name__)
         self._cfg = config_loader.load_config_for_package(_default_config_file, __package__, custom_config)
-        self._custom_config = custom_config
         self.unit_registry = unit_registry
         idd_path = get_idd_path(ep_config=self._cfg)
         self.logger.info(f"using IDD {idd_path}")
@@ -115,7 +112,7 @@ class CesarIDFWriter:
         idf = IDF(str(self.idf_file_path))
         self.add_basic_simulation_settings(idf, bldg_model.site.site_ground_temperatures)
         constr_handler = ConstructionIDFWritingHandler(bldg_model.bldg_construction, bldg_model.neighbours_construction_props, self.unit_registry)
-        constr_and_mat_idfs = self.add_building_geometry(idf, bldg_model.bldg_shape, constr_handler)
+        self.add_building_geometry(idf, bldg_model.bldg_shape, constr_handler)
 
         self.add_neighbours(idf, bldg_model.neighbours, constr_handler)
         self.add_building_properties(
@@ -128,7 +125,6 @@ class CesarIDFWriter:
         )
         idf = self.add_output_settings(idf)
         idf.save(filename=str(self.idf_file_path))
-        self.__append_files(constr_and_mat_idfs)
 
     def add_basic_simulation_settings(self, idf, site_ground_temps: SiteGroundTemperatures) -> IDF:
         """
@@ -248,10 +244,6 @@ class CesarIDFWriter:
         idf_writer_geometry.add_basic_geometry_settings(idf)
         self.zone_data = idf_writer_geometry.add_building(idf, bldg_shape_detailed, constr_handler)
 
-        # in case the constructions are defined as IDF files, we need to pass them back as they need to be appended to the IDF file after the idf creation process
-        # returned list is empty in case the cesarp.model.Construction and cesarp.model.WindowGlassConstruction are used for all constructions of the building
-        return constr_handler.get_partial_idf_files()
-
     def add_neighbours(
         self,
         idf,
@@ -288,7 +280,7 @@ class CesarIDFWriter:
         assert self.zone_data is not None, "make sure that prior to calling add_buidlding_properties attribute zone_data is initialized, e.g. by calling add_buidling_geometry"
         assert (
             list(self.zone_data.keys()) == building_operation_mapping.all_assigned_floor_nrs  # type: ignore  # checked self.zone_data for none in assert on line 288
-        ), f"zones/floors {list(self.zone_data.keys())} in geometry do not match with the floors in the building operation mapping ({building_operation_mapping.all_assigned_floor_nrs})"   # type: ignore  # checked self.zone_data for none in assert on line 288
+        ), f"zones/floors {list(self.zone_data.keys())} in geometry do not match with the floors in the building operation mapping ({building_operation_mapping.all_assigned_floor_nrs})"  # type: ignore  # checked self.zone_data for none in assert on line 288
 
         for (floor_nrs, bldg_op) in building_operation_mapping.get_operation_assignments():
             bldg_op_local_profiles = copy.deepcopy(bldg_op)
@@ -312,43 +304,12 @@ class CesarIDFWriter:
 
         return idf
 
-    @staticmethod
-    def collect_construction_idf_file_pathes(bldg_construction):
-        """
-        Get all construction IDF files which are referenced by any of the construction descriptions.
-        Using a set to collect ensures each file is only once in the list, even if it is referenced multiple times.
-
-        :param bldg_construction: BuildingConstruction object
-        :return: list of construction IDF files referenced by the construction descriptions in bldg_construction
-        """
-        construction_idfs = [val.idf_file_path for val in bldg_construction.get_constructions_for_all_bldg_elements().values() if isinstance(val, ConstructionAsIDF)]
-        return CesarIDFWriter.unique_elements_of_list(construction_idfs)
-
-    @staticmethod
-    def collect_material_idf_files(bldg_construction):
-        """
-        Get all material IDF files which are referenced by any of the construction descriptions.
-        Using a set to collect ensures each file is only once in the list, even if it is referenced multiple times.
-
-        :param bldg_construction: BuildingConstruction object
-        :return: list of material IDF files referenced by the construction descriptions in bldg_construction
-        """
-        material_idfs = [val.materials_idf_file_path for val in bldg_construction.get_constructions_for_all_bldg_elements().values() if isinstance(val, ConstructionAsIDF)]
-        return CesarIDFWriter.unique_elements_of_list(material_idfs)
-
     def __handle_profile_file(self, the_profile):
         if isinstance(the_profile, ScheduleFile):
             the_profile_updated_path = copy.copy(the_profile)
             the_profile_updated_path.schedule_file = self.profiles_files_handler_method(the_profile_updated_path.schedule_file)
             return the_profile_updated_path
         return the_profile
-
-    def __append_files(self, to_be_appended_filenames):
-
-        with open(self.idf_file_path, "ab") as file_to_append_to:
-            for filename_to_be_appended in to_be_appended_filenames:
-                with open(filename_to_be_appended, "rb") as to_be_appended:
-                    shutil.copyfileobj(to_be_appended, file_to_append_to, 1024)
 
     def __create_empty_idf(self):
         idfstring = idf_strings.version.format(get_eplus_version(ep_config=self._cfg))

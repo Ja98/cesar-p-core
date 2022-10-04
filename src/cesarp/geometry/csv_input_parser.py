@@ -1,6 +1,6 @@
 # coding=utf-8
 #
-# Copyright (c) 2021, Empa, Leonie Fierz, Aaron Bojarski, Ricardo Parreira da Silva, Sven Eggimann.
+# Copyright (c) 2022, Empa, Leonie Fierz, Aaron Bojarski, Ricardo Parreira da Silva, Sven Eggimann.
 #
 # This file is part of CESAR-P - Combined Energy Simulation And Retrofit written in Python
 #
@@ -33,7 +33,7 @@ def read_sitevertices_from_csv(file_path, data_labels: Dict[str, str], separator
     To each building a unique bld_id is assigned.
 
     Expected entries per row in csv, each representing one vertex of a building
-    'gis_fid': fid identifying building in the external gis tool
+    'gis_fid': fid identifying building in the external gis tool; expected to be numeric
     'height': height of building in meter
     'x': x coordinate of vertex, meter
     'y': y coordinate of vertex, meter
@@ -51,5 +51,6 @@ def read_sitevertices_from_csv(file_path, data_labels: Dict[str, str], separator
     allentries = pd.read_csv(file_path, sep=separator)
     data_labels_orig_to_cesar = dict([(value, key) for key, value in data_labels.items()])  # reverse dict
     allentries = allentries.rename(columns=data_labels_orig_to_cesar, errors="raise")
+    allentries = allentries.astype({"gis_fid": "int"})
 
     return allentries

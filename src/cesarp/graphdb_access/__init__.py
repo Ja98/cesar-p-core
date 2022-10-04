@@ -1,6 +1,6 @@
 # coding=utf-8
 #
-# Copyright (c) 2021, Empa, Leonie Fierz, Aaron Bojarski, Ricardo Parreira da Silva, Sven Eggimann.
+# Copyright (c) 2022, Empa, Leonie Fierz, Aaron Bojarski, Ricardo Parreira da Silva, Sven Eggimann.
 #
 # This file is part of CESAR-P - Combined Energy Simulation And Retrofit written in Python
 #
@@ -30,9 +30,6 @@ If you use a remote GraphDB, you are responsible to save or track the data used 
 which means after some time you wont be able to reproduce the exact same results when querying data from the same remote DB.
 
 The package is not a strict data access, as there is some business logic included.
-
-This data access is a replacement for the :py:mod:`cesarp.idf_construction_db_access` relying on partial IDF files.
-
 
 Main API classes
 

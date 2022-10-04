@@ -1,6 +1,6 @@
 # coding=utf-8
 #
-# Copyright (c) 2021, Empa, Leonie Fierz, Aaron Bojarski, Ricardo Parreira da Silva, Sven Eggimann.
+# Copyright (c) 2022, Empa, Leonie Fierz, Aaron Bojarski, Ricardo Parreira da Silva, Sven Eggimann.
 #
 # This file is part of CESAR-P - Combined Energy Simulation And Retrofit written in Python
 #
@@ -20,11 +20,11 @@
 # Contact: https://www.empa.ch/web/s313
 #
 from typing import List, Protocol
+from enum import Enum
 
 import cesarp.common.csv_writer
 import cesarp.common
 from cesarp.SIA2024.SIA2024DataAccessor import SIA2024DataAccessor
-from cesarp.SIA2024.SIA2024BuildingType import SIA2024BldgTypeKeys
 from cesarp.SIA2024.demand_generators.OccupancyProfileGenerator import OccupancyProfileGenerator
 from cesarp.SIA2024.demand_generators.AreaPerPersonCalculator import AreaPerPersonCalculator
 from cesarp.SIA2024.demand_generators.ActivityHeatGainCalculator import ActivityHeatGainCalculator
@@ -76,7 +76,7 @@ class SIA2024ParametersFactory:
     __VARIABILITY_SETTINGS_KEY = "VARIABILITY_SETTINGS"
     __DHW_BASED_ON_LITER_PER_DAY_KEY = "DHW_BASED_ON_LITER_PER_DAY"
 
-    def __init__(self, sia_base_data: SIA2024DataAccessor, ureg, custom_config={}):
+    def __init__(self, sia_base_data: SIA2024DataAccessor, ureg, custom_config=None):
         """
         Initialization
 
@@ -99,11 +99,12 @@ class SIA2024ParametersFactory:
         )
         self.data_descr.CONFIG_ENTRIES.update({self.__VARIABILITY_SETTINGS_KEY: self._cfg_variability})
 
-    def get_sia2024_parameters(self, bldg_type_key: SIA2024BldgTypeKeys, variability_active: bool, name: str = None):
+    def get_sia2024_parameters(self, bldg_type_key: Enum, variability_active: bool, name: str = None):
         """
         Creates one SIA2024 parameter set for teh given building type, with variability or nominal
 
         :param bldg_type_key: building type for which to create the parameter set, the Enum is dynamically loaded in the data accessor (e.g. SIA2024DataAccessor)
+        :type bldg_type_key: SIA2024BldgTypeKeys (defined as Enum to satisfy protocol definition)
         :param variability_active:
         :param name: name for this parameter set, if None bldg_type_key is used
         :return: parameter set as object of type SIA2024Parameters
@@ -138,16 +139,7 @@ class SIA2024ParametersFactory:
         sia2024params = SIA2024Parameters.emptyObj()
         sia2024params.data_descr = self.data_descr
         sia2024params.name = name
-        self.__add_building_operation(
-            sia2024params,
-            area_pp_gen,
-            bldg_type,
-            monthly_variation,
-            nighttime_pattern_profile,
-            occ_prof_gen,
-            variability_active,
-            profile_start_date
-        )
+        self.__add_building_operation(sia2024params, area_pp_gen, bldg_type, monthly_variation, nighttime_pattern_profile, occ_prof_gen, variability_active, profile_start_date)
         self.__add_hvac(sia2024params, bldg_type, nighttime_pattern_profile, occ_prof_gen, area_pp_gen, variability_active)
         self.__add_infiltration(sia2024params, bldg_type, variability_active)
         self.profile_files_nr_counter += 1
@@ -164,15 +156,7 @@ class SIA2024ParametersFactory:
         return self.sia_base_data.get_bldg_type(bldg_type_key).is_residential
 
     def __add_building_operation(
-        self,
-        sia2024params,
-        area_pp_gen,
-        bldg_type,
-        monthly_variation,
-        nighttime_pattern_profile,
-        occ_prof_gen,
-        variability_active: bool,
-        profile_start_date
+        self, sia2024params, area_pp_gen, bldg_type, monthly_variation, nighttime_pattern_profile, occ_prof_gen, variability_active: bool, profile_start_date
     ):
         activity_gen = ActivityHeatGainCalculator(bldg_type, self.sia_base_data, self.ureg)  # activity has no variability option
 

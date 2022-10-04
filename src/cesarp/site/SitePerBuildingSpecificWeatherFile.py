@@ -19,32 +19,32 @@
 #
 # Contact: https://www.empa.ch/web/s313
 #
-from typing import Dict, Protocol
+from typing import Dict
+import os
+import logging
+from pathlib import Path
 from cesarp.model.Site import Site
 from cesarp.site.SiteGroundTemperatureFactory import SiteGroundTemperatureFactory
-from cesarp.weather.swiss_communities.SwissCommunityWeatherChooser import SwissCommunityWeatherChooser
 import cesarp.common
 from cesarp.site import _default_config_file
 
 
-class WeahterChooserProtocol(Protocol):
-    def get_weather_file(self, community: str) -> str:
-        ...
-
-
-class SitePerSwissCommunityFactory:
-    def __init__(self, bldg_to_community_id_mapping: Dict[int, int], unit_reg, custom_config=None):
+class SitePerBuildingSpecificWeatherFile:
+    def __init__(self, bldg_to_weather_file_mapping: Dict[int, str], weather_files_folder_path, unit_reg, custom_config=None):
         """
-        :param bldg_to_community_id_mapping: Dict mapping building fid to a community name
+        :param bldg_to_weather_file_mapping: Dict mapping building fid to a weather file name
         """
         if custom_config is None:
             custom_config = {}
-        self.bldg_to_community_mapping = bldg_to_community_id_mapping
-        self.weather_file_chooser = SwissCommunityWeatherChooser(custom_config)
+        self.bldg_to_weather_file_mapping = bldg_to_weather_file_mapping
+        self.weather_files_folder_path = weather_files_folder_path
         self.ground_temps = SiteGroundTemperatureFactory(unit_reg, custom_config).get_ground_temperatures()
         cfg = cesarp.common.load_config_for_package(_default_config_file, __package__, custom_config)
         self.simulation_year = cfg["SIMULATION_YEAR"]
+        self._logger = logging.getLogger(__name__)
 
     def get_site(self, bldg_fid):
-        community_id = self.bldg_to_community_mapping[bldg_fid]
-        return Site(self.weather_file_chooser.get_weather_file(community_id), self.ground_temps, self.simulation_year)
+        weather_file_path = str(self.weather_files_folder_path / Path(self.bldg_to_weather_file_mapping[bldg_fid]))
+        if not os.path.exists(weather_file_path):
+            raise FileNotFoundError(f"{weather_file_path} does not exist. please provide an existing file for bldg_fid {bldg_fid} in the WEATHER_FILE_PER_BLDG_FILE")
+        return Site(weather_file_path, self.ground_temps, self.simulation_year)
